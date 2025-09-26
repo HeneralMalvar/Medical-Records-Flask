@@ -1,0 +1,5 @@
+patient_id,name,sex,visit_id,visit_date,visit_age,address,status,history,pe,diagnosis,management
+2,charman,Male,,,,,,,,,
+3,test,Female,1.0,2025-09-26,10.0,"Dapdap,Bamban",SSS,Takla,Takla,Takla,Mangan Dakal
+3,test,Female,2.0,2025-09-26,27.0,"Dapdap,Bamban",Checkup,Takla,Takla,Takla,Mangan Dakal
+3,test,Female,3.0,2025-09-26,27.0,"Dapdap,Bamban",Follow Checkup,tttttttttttttttttttttttaaaaaaaaa@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@,@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@,@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@,@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
