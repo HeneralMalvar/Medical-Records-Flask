@@ -120,14 +120,22 @@ document.getElementById("patientReset").addEventListener("click", () => {
   document.getElementById("deletePatientBtn").style.display = "none";
 });
 
-// Search patients
-document.getElementById("searchBox").addEventListener("input", async (e) => {
+// ---------- Live Search with debounce ----------
+let searchTimeout = null;
+document.getElementById("searchBox").addEventListener("input", (e) => {
+  clearTimeout(searchTimeout);
   const q = e.target.value.trim();
-  if (!q) return loadPatients();
-  console.log("🔍 Searching patients:", q);
-  const res = await fetch(`/api/patients/search?q=${encodeURIComponent(q)}`);
-  const data = await res.json();
-  renderPatients(data);
+
+  searchTimeout = setTimeout(async () => {
+    if (!q) {
+      loadPatients(); // reload all when empty
+      return;
+    }
+    console.log("🔍 Searching patients:", q);
+    const res = await fetch(`/api/patients/search?q=${encodeURIComponent(q)}`);
+    const data = await res.json();
+    renderPatients(data);
+  }, 400); // adjust debounce delay
 });
 
 // ---------- Visits ----------
