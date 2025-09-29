@@ -6,8 +6,30 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
+  <!-- Favicon -->
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2966/2966483.png" type="image/png">
+
   <style>
-    /* General textarea auto-resize with max height */
+    /* Background */
+    body {
+      background: linear-gradient(135deg, #e6f7ff, #f9f9f9);
+      min-height: 100vh;
+    }
+
+    /* Container card style */
+    .card {
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+
+    h1 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+
+    /* General textarea auto-resize */
     textarea {
       resize: vertical;
       min-height: 60px;
@@ -15,12 +37,11 @@
       overflow-y: auto;
     }
 
-    /* Wrap and scroll only for History, PE, Diagnosis, Management cells */
-    #visitsTable td:nth-child(5),  /* History */
-    #visitsTable td:nth-child(6),  /* PE */
-    #visitsTable td:nth-child(7),  /* Diagnosis */
-    #visitsTable td:nth-child(8)   /* Management */
-    {
+    /* Wrap long text in visit tables */
+    #visitsTable td:nth-child(5),
+    #visitsTable td:nth-child(6),
+    #visitsTable td:nth-child(7),
+    #visitsTable td:nth-child(8) {
       white-space: pre-wrap;
       word-break: break-word;
       vertical-align: top;
@@ -28,7 +49,7 @@
       overflow-y: auto;
     }
 
-    /* Make visit modals scrollable */
+    /* Scrollable modal body */
     .modal-dialog-scrollable .modal-body {
       max-height: calc(100vh - 200px);
       overflow-y: auto;
@@ -36,7 +57,10 @@
   </style>
 </head>
 <body class="container py-4">
-  <h1 class="mb-4">Clinic Medical Records</h1>
+  <h1 class="mb-4">
+    <img src="https://cdn-icons-png.flaticon.com/512/2966/2966483.png" alt="Clinic Icon" width="40" height="40">
+    Clinic Medical Records
+  </h1>
 
   <!-- Patient Add / Edit -->
   <div class="card mb-4">
@@ -72,8 +96,8 @@
 
   <!-- Patients Table -->
   <div class="table-responsive mb-4" style="max-height: 400px; overflow-y: auto;">
-    <table class="table table-sm table-bordered" id="patientsTable">
-      <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+    <table class="table table-sm table-bordered bg-white rounded" id="patientsTable">
+      <thead class="table-light sticky-top">
         <tr>
           <th>ID</th>
           <th>Name</th>
@@ -81,7 +105,7 @@
           <th style="min-width:220px">Actions</th>
         </tr>
       </thead>
-      <tbody></tbody>
+      <tbody></tbody> <!-- ✅ tbody is inside patientsTable -->
     </table>
   </div>
 
@@ -95,7 +119,7 @@
         </div>
         <div class="modal-body">
           <div class="table-responsive mb-3">
-            <table class="table table-sm table-bordered">
+            <table class="table table-sm table-bordered bg-white rounded">
               <thead class="table-light">
                 <tr>
                   <th>Date</th>
@@ -109,7 +133,7 @@
                   <th style="min-width:150px">Actions</th>
                 </tr>
               </thead>
-              <tbody id="visitsTable"></tbody>
+              <tbody id="visitsTable"></tbody> <!-- ✅ visitsTable is tbody -->
             </table>
           </div>
 
