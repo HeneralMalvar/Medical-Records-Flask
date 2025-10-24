@@ -120,22 +120,14 @@ document.getElementById("patientReset").addEventListener("click", () => {
   document.getElementById("deletePatientBtn").style.display = "none";
 });
 
-// ---------- Live Search with debounce ----------
-let searchTimeout = null;
-document.getElementById("searchBox").addEventListener("input", (e) => {
-  clearTimeout(searchTimeout);
+// Search patients
+document.getElementById("searchBox").addEventListener("input", async (e) => {
   const q = e.target.value.trim();
-
-  searchTimeout = setTimeout(async () => {
-    if (!q) {
-      loadPatients(); // reload all when empty
-      return;
-    }
-    console.log("🔍 Searching patients:", q);
-    const res = await fetch(`/api/patients/search?q=${encodeURIComponent(q)}`);
-    const data = await res.json();
-    renderPatients(data);
-  }, 400); // adjust debounce delay
+  if (!q) return loadPatients();
+  console.log("🔍 Searching patients:", q);
+  const res = await fetch(`/api/patients/search?q=${encodeURIComponent(q)}`);
+  const data = await res.json();
+  renderPatients(data);
 });
 
 // ---------- Visits ----------
@@ -161,11 +153,18 @@ function renderVisits(rows) {
       <td>${escapeHtml(v.diagnosis || "")}</td>
       <td>${escapeHtml(v.management || "")}</td>
       <td>
+        <button class="btn btn-sm btn-primary" onclick="printMedCert(${v.id})">Print</button>
         <button class="btn btn-sm btn-warning" onclick="openEditVisit(${v.id})">Edit</button>
         <button class="btn btn-sm btn-danger" onclick="confirmDeleteVisit(${v.id})">Delete</button>
       </td>`;
     visitsTable.appendChild(tr);
   });
+}
+
+// Print Medical Certificate
+function printMedCert(vid) {
+  console.log("🖨️ Printing certificate for visit", vid);
+  window.open(`/api/visits/${vid}/print`, "_blank");
 }
 
 // Load visits
@@ -185,11 +184,38 @@ function openVisits(pid, name) {
   new bootstrap.Modal(document.getElementById("visitsModal")).show();
 }
 
-// Add visit
+// --- Mutually Exclusive Checkboxes (Add Visit) ---
+document.querySelectorAll(".cert-option").forEach(cb => {
+  cb.addEventListener("change", (e) => {
+    if (e.target.checked) {
+      document.querySelectorAll(".cert-option").forEach(other => {
+        if (other !== e.target) other.checked = false;
+      });
+    }
+  });
+});
+
+// --- Add visit with auto-generated remarks ---
 const visitForm = document.getElementById("visitForm");
 visitForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!currentPatientId) { alert("No patient selected"); return; }
+
+  let remarksText = "";
+  const fit = document.getElementById("fitToWork").checked;
+  const rest = document.getElementById("restForDays").checked;
+  const child = document.getElementById("child").checked;
+  const restDays = document.getElementById("restDays").value;
+
+  if (fit) {
+    remarksText = "No medical contraindication; Fit to duty.";
+  } else if (rest) {
+    const days = restDays ? `${restDays}` : "several";
+    remarksText = `The patient is advised to rest for ${days} day(s) for optimal recovery.`;
+  } else if (child) {
+    remarksText = "The patient requires close monitoring.";
+  }
+
   const payload = {
     visit_date: document.getElementById("v_visit_date").value || null,
     age: document.getElementById("v_age").value || null,
@@ -199,13 +225,16 @@ visitForm.addEventListener("submit", async (e) => {
     pe: document.getElementById("v_pe").value || "",
     diagnosis: document.getElementById("v_diagnosis").value || "",
     management: document.getElementById("v_management").value || "",
+    remarks: remarksText
   };
-  console.log("📤 Adding visit:", payload);
+
+  console.log("📤 Adding visit with remarks:", payload);
   const res = await fetch(`/api/patients/${currentPatientId}/visits`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
+
   if (res.ok) {
     alert("✅ Visit added");
     visitForm.reset();
@@ -217,7 +246,18 @@ visitForm.addEventListener("submit", async (e) => {
   }
 });
 
-// Edit visit
+// --- Mutually Exclusive Checkboxes (Edit Visit) ---
+document.querySelectorAll(".edit-cert-option").forEach(cb => {
+  cb.addEventListener("change", (e) => {
+    if (e.target.checked) {
+      document.querySelectorAll(".edit-cert-option").forEach(other => {
+        if (other !== e.target) other.checked = false;
+      });
+    }
+  });
+});
+
+// --- Edit Visit ---
 function openEditVisit(vid) {
   console.log("✏️ Opening edit modal for visit", vid);
   fetch(`/api/visits/${vid}`)
@@ -241,6 +281,22 @@ function openEditVisit(vid) {
 document.getElementById("editVisitForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const vid = document.getElementById("edit_visit_id").value;
+
+  let remarksText = "";
+  const fit = document.getElementById("editFitToWork").checked;
+  const rest = document.getElementById("editRestForDays").checked;
+  const child = document.getElementById("editChild").checked;
+  const restDays = document.getElementById("editRestDays").value;
+
+  if (fit) {
+    remarksText = "No medical contraindication; Fit to duty.";
+  } else if (rest) {
+    const days = restDays ? `${restDays}` : "several";
+    remarksText = `The patient is advised to rest for ${days} day(s) for optimal recovery.`;
+  } else if (child) {
+    remarksText = "The patient requires close monitoring.";
+  }
+
   const payload = {
     visit_date: document.getElementById("edit_visit_date").value || null,
     age: document.getElementById("edit_age").value || null,
@@ -249,14 +305,17 @@ document.getElementById("editVisitForm").addEventListener("submit", async (e) =>
     history: document.getElementById("edit_history").value || "",
     pe: document.getElementById("edit_pe").value || "",
     diagnosis: document.getElementById("edit_diagnosis").value || "",
-    management: document.getElementById("edit_management").value || ""
+    management: document.getElementById("edit_management").value || "",
+    remarks: remarksText
   };
-  console.log("📤 Updating visit:", payload);
+
+  console.log("📤 Updating visit with remarks:", payload);
   const res = await fetch(`/api/visits/${vid}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
   });
+
   if (res.ok) {
     alert("✅ Visit updated");
     bootstrap.Modal.getInstance(document.getElementById("editVisitModal")).hide();
