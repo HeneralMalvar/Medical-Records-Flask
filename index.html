@@ -5,62 +5,9 @@
   <title>Clinic Medical Records</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- Favicon -->
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2966/2966483.png" type="image/png">
-
-  <style>
-    /* Background */
-    body {
-      background: linear-gradient(135deg, #e6f7ff, #f9f9f9);
-      min-height: 100vh;
-    }
-
-    /* Container card style */
-    .card {
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      border-radius: 10px;
-    }
-
-    h1 {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 600;
-    }
-
-    /* General textarea auto-resize */
-    textarea {
-      resize: vertical;
-      min-height: 60px;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-
-    /* Wrap long text in visit tables */
-    #visitsTable td:nth-child(5),
-    #visitsTable td:nth-child(6),
-    #visitsTable td:nth-child(7),
-    #visitsTable td:nth-child(8) {
-      white-space: pre-wrap;
-      word-break: break-word;
-      vertical-align: top;
-      max-height: 120px;
-      overflow-y: auto;
-    }
-
-    /* Scrollable modal body */
-    .modal-dialog-scrollable .modal-body {
-      max-height: calc(100vh - 200px);
-      overflow-y: auto;
-    }
-  </style>
 </head>
 <body class="container py-4">
-  <h1 class="mb-4">
-    <img src="https://cdn-icons-png.flaticon.com/512/2966/2966483.png" alt="Clinic Icon" width="40" height="40">
-    Clinic Medical Records
-  </h1>
+  <h1 class="mb-4">Clinic Medical Records</h1>
 
   <!-- Patient Add / Edit -->
   <div class="card mb-4">
@@ -95,9 +42,9 @@
   </div>
 
   <!-- Patients Table -->
-  <div class="table-responsive mb-4" style="max-height: 400px; overflow-y: auto;">
-    <table class="table table-sm table-bordered bg-white rounded" id="patientsTable">
-      <thead class="table-light sticky-top">
+  <div class="table-responsive mb-4">
+    <table class="table table-sm table-bordered" id="patientsTable">
+      <thead class="table-light">
         <tr>
           <th>ID</th>
           <th>Name</th>
@@ -105,13 +52,13 @@
           <th style="min-width:220px">Actions</th>
         </tr>
       </thead>
-      <tbody></tbody> <!-- ✅ tbody is inside patientsTable -->
+      <tbody></tbody>
     </table>
   </div>
 
   <!-- Visits Modal -->
   <div class="modal fade" id="visitsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Patient Visits <small id="visitsPatientName" class="text-muted ms-2"></small></h5>
@@ -119,7 +66,7 @@
         </div>
         <div class="modal-body">
           <div class="table-responsive mb-3">
-            <table class="table table-sm table-bordered bg-white rounded">
+            <table class="table table-sm table-bordered">
               <thead class="table-light">
                 <tr>
                   <th>Date</th>
@@ -130,10 +77,10 @@
                   <th>PE</th>
                   <th>Diagnosis</th>
                   <th>Management</th>
-                  <th style="min-width:150px">Actions</th>
+                  <th style="min-width:200px">Actions</th>
                 </tr>
               </thead>
-              <tbody id="visitsTable"></tbody> <!-- ✅ visitsTable is tbody -->
+              <tbody id="visitsTable"></tbody>
             </table>
           </div>
 
@@ -159,9 +106,9 @@
                 <label class="form-label small">Visit Type</label>
                 <select id="v_status" class="form-select">
                   <option value="">Select</option>
-                  <option>Follow Checkup</option>
-                  <option>Checkup</option>
-                  <option>SSS</option>
+                  <option>Follow Check-up</option>
+                  <option>Check-up</option>
+                  <option>Check-up + SSS</option>
                 </select>
               </div>
               <div class="col-md-9">
@@ -183,6 +130,29 @@
                 <textarea id="v_management" class="form-control"></textarea>
               </div>
             </div>
+
+            <!-- ✅ Certificate Options -->
+            <div class="row g-2 mt-2">
+              <label class="form-label small mb-1">Medical Certificate Options</label>
+              <div class="col-md-12 d-flex flex-wrap align-items-center gap-3">
+                <div class="form-check">
+                  <input class="form-check-input cert-option" type="checkbox" id="fitToWork">
+                  <label class="form-check-label" for="fitToWork">Fit to work</label>
+                </div>
+
+                <div class="form-check d-flex align-items-center gap-2">
+                  <input class="form-check-input cert-option" type="checkbox" id="restForDays">
+                  <label class="form-check-label" for="restForDays">Rest for</label>
+                  <input type="number" id="restDays" class="form-control form-control-sm" style="width:80px" placeholder="days" min="1">
+                </div>
+
+                <div class="form-check">
+                  <input class="form-check-input cert-option" type="checkbox" id="child">
+                  <label class="form-check-label" for="child">Child</label>
+                </div>
+              </div>
+            </div>
+
             <div class="mt-2">
               <button class="btn btn-success" type="submit">Add Visit</button>
             </div>
@@ -192,9 +162,9 @@
     </div>
   </div>
 
-  <!-- Edit Visit Modal -->
+  <!-- ✅ Edit Visit Modal Updated -->
   <div class="modal fade" id="editVisitModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Edit Visit</h5>
@@ -219,9 +189,10 @@
               <label class="form-label small">Visit Type</label>
               <select id="edit_status" class="form-select">
                 <option value="">Select</option>
-                <option>Follow Checkup</option>
-                <option>Checkup</option>
+                <option>Follow Check-up</option>
+                <option>Check-up</option>
                 <option>SSS</option>
+                <option>Check-up + SSS</option>
               </select>
             </div>
             <div class="mb-2">
@@ -240,6 +211,29 @@
               <label class="form-label small">Management</label>
               <textarea id="edit_management" class="form-control"></textarea>
             </div>
+
+            <!-- ✅ Added Certificate Options for Edit -->
+            <div class="row g-2 mt-2">
+              <label class="form-label small mb-1">Medical Certificate Options</label>
+              <div class="col-md-12 d-flex flex-wrap align-items-center gap-3">
+                <div class="form-check">
+                  <input class="form-check-input edit-cert-option" type="checkbox" id="editFitToWork">
+                  <label class="form-check-label" for="editFitToWork">Fit to work</label>
+                </div>
+
+                <div class="form-check d-flex align-items-center gap-2">
+                  <input class="form-check-input edit-cert-option" type="checkbox" id="editRestForDays">
+                  <label class="form-check-label" for="editRestForDays">Rest for</label>
+                  <input type="number" id="editRestDays" class="form-control form-control-sm" style="width:80px" placeholder="days" min="1">
+                </div>
+
+                <div class="form-check">
+                  <input class="form-check-input edit-cert-option" type="checkbox" id="editChild">
+                  <label class="form-check-label" for="editChild">Child</label>
+                </div>
+              </div>
+            </div>
+
             <div class="mt-2">
               <button class="btn btn-primary" type="submit">Save Changes</button>
             </div>
@@ -252,15 +246,5 @@
   <!-- Bootstrap + app.js -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="{{ url_for('static', filename='app.js') }}"></script>
-
-  <!-- Auto-resize script -->
-  <script>
-    document.addEventListener("input", function (e) {
-      if (e.target.tagName.toLowerCase() === "textarea") {
-        e.target.style.height = "auto";
-        e.target.style.height = Math.min(e.target.scrollHeight, 200) + "px";
-      }
-    });
-  </script>
 </body>
 </html>
